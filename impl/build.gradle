@@ -5,5 +5,6 @@ apply from: "${rootDir}/gradle/plugins/android-bintray-push.gradle"
 
 
 dependencies {
-   // compile project(':annotation')
+    compile project(':lib')
+    compile('com.getkeepsafe.relinker:relinker:1.2.2')
 }

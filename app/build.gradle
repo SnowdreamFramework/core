@@ -3,15 +3,18 @@ apply plugin: 'idea'
 apply from: "${rootDir}/gradle/plugins/android.gradle"
 
 
-//kapt {
-//    generateStubs = true
-//}
+kapt {
+    generateStubs = true
+}
 
 dependencies {
     compile 'com.github.snowdream:annotation:0.7@aar'
 
- //   compile project(':lib')
- //   compile project(':annotation')
-//    annotationProcessor project(':processor')
- //   kapt project(':processor')
+    compile project(':lib')
+    compile project(':impl')
+
+    kapt 'com.github.snowdream.toybricks:processor:0.9.2'
+//    annotationProcessor 'com.github.snowdream.toybricks:processor:0.9.2'
+    compile 'com.github.snowdream.toybricks:annotation:0.9.2'
+    compile 'com.github.snowdream:toybricks:0.9.2'
 }
