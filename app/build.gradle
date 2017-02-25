@@ -1,0 +1,17 @@
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply from: "${rootDir}/gradle/plugins/android.gradle"
+
+
+//kapt {
+//    generateStubs = true
+//}
+
+dependencies {
+    compile 'com.github.snowdream:annotation:0.7@aar'
+
+ //   compile project(':lib')
+ //   compile project(':annotation')
+//    annotationProcessor project(':processor')
+ //   kapt project(':processor')
+}
