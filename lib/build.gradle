@@ -3,8 +3,17 @@ apply plugin: 'idea'
 apply from: "${rootDir}/gradle/plugins/android-library.gradle"
 apply from: "${rootDir}/gradle/plugins/android-bintray-push.gradle"
 
+kapt {
+    generateStubs = true
+}
 
 dependencies {
-    compile 'com.github.snowdream.toybricks:annotation:0.9.2'
-    compile 'com.github.snowdream:toybricks:0.9.2'
+    compile deps.'android-toybricks-annotation'
+
+    kapt deps.'android-toybricks-processor'
+    //annotationProcessor deps.'android-toybricks-processor'
+
+    compile deps.'android-toybricks'
 }
+
+apply plugin: 'com.github.snowdream.toybricks'

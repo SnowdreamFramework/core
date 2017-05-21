@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import com.getkeepsafe.relinker.sample.Native;
 import com.github.snowdream.core.lang.ILoadListener;
 import com.github.snowdream.core.lang.System;
 import com.github.snowdream.kotlin.helloworld.IKotlinText;
@@ -27,30 +28,34 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                IKotlinText ktext = ToyBricks.getImplementation(IKotlinText.class);
+                //IKotlinText ktext = ToyBricks.getImplementation(IKotlinText.class);
+                //
+                //Snackbar.make(view,ktext.getText(), Snackbar.LENGTH_LONG)
+                //        .setAction("Action", null).show();
 
-                Snackbar.make(view,ktext.getText(), Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Snackbar.make(fab, Native.helloJni(), Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
             }
         });
 
-//        System.loadLibrary(this, "hellojni", new ILoadListener() {
-//            @Override
-//            public void success() {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        Snackbar.make(fab, Native.helloJni(), Snackbar.LENGTH_LONG)
-//                                .setAction("Action", null).show();
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void failure(@NotNull Throwable t) {
-//
-//            }
-//        });
+        System.loadLibrary(this, "hellojni", new ILoadListener() {
+            @Override
+            public void success() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Snackbar.make(fab, Native.helloJni(), Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
+                });
+            }
+
+            @Override
+            public void failure(@NotNull Throwable t) {
+                Snackbar.make(fab,  t.getMessage(), Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+            }
+        });
     }
 
     @Override

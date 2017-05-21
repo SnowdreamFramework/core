@@ -3,8 +3,18 @@ apply plugin: 'idea'
 apply from: "${rootDir}/gradle/plugins/android-library.gradle"
 apply from: "${rootDir}/gradle/plugins/android-bintray-push.gradle"
 
+kapt {
+    generateStubs = true
+}
 
 dependencies {
+    compile deps.'android-toybricks-annotation'
+
+    kapt deps.'android-toybricks-processor'
+    //annotationProcessor deps.'android-toybricks-processor'
+
     compile project(':lib')
     compile('com.getkeepsafe.relinker:relinker:1.2.2')
 }
+
+apply plugin: 'com.github.snowdream.toybricks'

@@ -5,17 +5,23 @@ apply plugin: 'kotlin-android-extensions'
 
 dependencies {
     compile  fileTree(dir: 'libs', include: '*.jar')
-    compile 'com.android.support:appcompat-v7:25.1.1'
-    compile 'com.android.support:design:25.1.1'
-    compile 'com.android.support:support-annotations:25.1.1'
-    compile 'com.android.support:multidex:1.0.1'
-    compile 'com.github.snowdream:annotation:0.7@aar'
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    //android
+    compile deps.'android-support-appcompat-v7'
+    compile deps.'android-support-support-annotations'
+    compile deps.'android-support-design'
+    compile deps.'android-support-multidex'
 
-    testCompile 'junit:junit:4.12'
+    //snowdream
+    compile deps.'snowdream-annotation'
 
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    //kotlin
+    compile deps.'kotlin-stdlib'
+
+    //java
+    testCompile deps.junit
+
+    androidTestCompile(deps.'android-support-espresso', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 }
@@ -63,6 +69,7 @@ android {
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+        main.jniLibs.srcDirs = ['libs', 'src/main/jniLibs/']
         test.java.srcDirs += 'src/test/kotlin'
     }
 
