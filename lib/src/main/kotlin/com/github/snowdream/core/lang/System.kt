@@ -15,7 +15,7 @@ class System private constructor() {
     }
 
     companion object {
-        @JvmField var sSoLoader = ToyBricks.getImplementation(ISoLoader::class.java)
+        @JvmField val sSoLoader = ToyBricks.getImplementation(ISoLoader::class.java)
 
         /**
          * Load libraries synchronously. Like System.loadLibrary();

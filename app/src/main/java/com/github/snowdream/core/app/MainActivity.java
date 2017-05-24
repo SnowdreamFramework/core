@@ -11,9 +11,11 @@ import android.view.MenuItem;
 import com.getkeepsafe.relinker.sample.Native;
 import com.github.snowdream.core.lang.ILoadListener;
 import com.github.snowdream.core.lang.System;
-import com.github.snowdream.kotlin.helloworld.IKotlinText;
-import com.github.snowdream.toybricks.ToyBricks;
+import com.github.snowdream.core.widget.Toast;
+import com.github.snowdream.core.widget.ToastBean;
 import org.jetbrains.annotations.NotNull;
+
+import static com.github.snowdream.core.widget.ToastBean.LENGTH_LONG;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -35,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
 
                 Snackbar.make(fab, Native.helloJni(), Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
+
+                Toast.show(getApplicationContext(), java.lang.System.currentTimeMillis()+"", LENGTH_LONG);
+
             }
         });
 
