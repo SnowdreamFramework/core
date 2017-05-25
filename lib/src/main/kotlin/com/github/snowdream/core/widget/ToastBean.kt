@@ -65,18 +65,6 @@ class ToastBean {
     lateinit var mContext: Context
 
     /**
-     * Return the mPolicy.
-
-     * @see .setMPolicy
-     */
-
-
-    /**
-     * Return the duration.
-
-     * @see .setDuration
-     */
-    /**
      * Set how long to show the view for.
 
      * @see .LENGTH_SHORT
@@ -103,28 +91,31 @@ class ToastBean {
      * @see .getGravity
      */
     var gravity: Int = 0
-        set
+      get
 
     /**
      * Return the X offset in pixels to apply to the gravity's location.
      */
     var xOffset: Int = 0
-        set
+        get
+
     /**
      * Return the Y offset in pixels to apply to the gravity's location.
      */
     var yOffset: Int = 0
-        set
+        get
+
     /**
      * Return the horizontal margin.
      */
-    var horizontalMargin: Float = 0.toFloat()
-        set
+     var horizontalMargin: Float = 0.toFloat()
+        get
+
     /**
      * Return the vertical margin.
      */
-    var verticalMargin: Float = 0.toFloat()
-        set
+     var verticalMargin: Float = 0.toFloat()
+        get
 
     private constructor() {
         throw AssertionError("No constructor allowed here!")
@@ -160,41 +151,6 @@ class ToastBean {
         gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
     }
 
-    override fun equals(obj: Any?): Boolean {
-        if (obj == null) return false
-
-        if (obj !is ToastBean) return false
-
-        val bean = obj
-
-        if (this.text !== bean.text) {
-            if (this.text == null || bean.text == null) return false
-
-            if (this.text != bean.text) {
-                return false
-            }
-        }
-
-        if (this.text != null || bean.text == null) {
-            return false
-        } else if (this.text == null || bean.text != null) {
-            return false
-        } else if (this.text == null || bean.text == null) {
-            if (this.view !== bean.view) return false
-        } else {
-            //Nothing to do.
-        }
-
-        if (this.gravity != bean.gravity ||
-                this.xOffset != bean.xOffset || this.yOffset != bean.yOffset ||
-                this.horizontalMargin != bean.horizontalMargin ||
-                this.verticalMargin != bean.verticalMargin) {
-            return false
-        }
-
-        return true
-    }
-
     /**
      * Check whether the toast is standard which just contains a text view.
      */
@@ -226,5 +182,40 @@ class ToastBean {
         this.gravity = gravity
         this.xOffset = xOffset
         this.yOffset = yOffset
+    }
+
+    /**
+     * if similar,Then update.
+     * else create new.
+     */
+    fun isSimilar(obj: Any?): Boolean {
+        if (obj == null) return false
+
+        if (obj !is ToastBean) return false
+
+        val bean = obj
+
+        var ret = true
+
+        if (this.isStandard != bean.isStandard ){
+            ret = false
+        }
+
+        if (this.view != bean.view ){
+            ret = false
+        }
+
+        if (this.gravity != bean.gravity ){
+            ret = false
+        }
+
+        if (this.gravity != bean.gravity ||
+                this.xOffset != bean.xOffset || this.yOffset != bean.yOffset ||
+                this.horizontalMargin != bean.horizontalMargin ||
+                this.verticalMargin != bean.verticalMargin) {
+            ret = false
+        }
+
+        return ret
     }
 }

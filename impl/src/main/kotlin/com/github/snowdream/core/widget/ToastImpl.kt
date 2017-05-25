@@ -130,22 +130,13 @@ class ToastImpl : IToast {
                     mToast!!.show()
                 }
                 ONE_LAST -> {
-                    if (mToastBean!!.isStandard && bean.isStandard) {
-                        if (mToastBean == bean) {
-                            if (!TextUtils.isEmpty(bean.text)) {
-                                mToast!!.setText(bean.text)
-                            } else if (bean.resId != -1) {
-                                mToast!!.setText(bean.resId)
-                            }
-                        } else {
-                            createOrUpdateToastFromToastBean(mToast, bean)
-                        }
-                    } else {
-                        if (mToastBean != bean) {
-                            cancel() // to avoid RuntimeException("This Toast was not created with Toast.makeText()");
-                            mToast = createOrUpdateToastFromToastBean(null, bean)
-                            mToast!!.show()
-                        }
+                    if (bean.isSimilar(mToastBean)){
+                        mToast = createOrUpdateToastFromToastBean(mToast, bean)
+                        mToast!!.show()
+                    }else{
+                        cancel() // to avoid RuntimeException("This Toast was not created with Toast.makeText()");
+                        mToast = createOrUpdateToastFromToastBean(null, bean)
+                        mToast!!.show()
                     }
 
                     mToastBean = bean
@@ -178,22 +169,26 @@ class ToastImpl : IToast {
         if (toast == null) { //create toast
             if (!TextUtils.isEmpty(bean.text)) {
                 _toast = android.widget.Toast.makeText(bean.mContext, bean.text, duration)
+                bean.resId = -1
                 bean.view = _toast.view
             } else if (bean.resId != -1) {
                 _toast = android.widget.Toast.makeText(bean.mContext, bean.resId, duration)
+                bean.text = null
                 bean.view = _toast.view
             } else {
                 _toast = android.widget.Toast(bean.mContext)
+                bean.resId = -1
+                bean.text = null
                 _toast.view = bean.view
             }
         } else {   //update toast
             _toast = toast
             if (!TextUtils.isEmpty(bean.text)) {
-                mToast!!.setText(bean.text)
+                _toast.setText(bean.text)
             } else if (bean.resId != -1) {
-                mToast!!.setText(bean.resId)
+                _toast.setText(bean.resId)
             } else if (bean.view != null) {
-                mToast!!.view = bean.view
+                _toast.view = bean.view
             }
         }
 
