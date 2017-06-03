@@ -16,6 +16,7 @@ interface IToast {
     fun onConfigurationChanged(newConfig: Configuration)
     fun release()
     fun cancel()
+    fun hide()
     fun isShown(): Boolean
 
     /**

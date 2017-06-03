@@ -6,10 +6,12 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.text.TextUtils
 import android.view.View
+import android.view.WindowManager
 import com.github.snowdream.core.widget.ToastBean.Companion.MANY_IN_ORDER
 import com.github.snowdream.core.widget.ToastBean.Companion.ONE_FIRST
 import com.github.snowdream.core.widget.ToastBean.Companion.ONE_LAST
 import com.github.snowdream.toybricks.annotation.Implementation
+
 
 /**
  * Created by snowdream on 17/5/24.
@@ -20,6 +22,7 @@ class ToastImpl : IToast {
     private var mToastBean: ToastBean? = null
     private var mToastBeanPortrait: ToastBean? = null
     private var mToastBeanLandscape: ToastBean? = null
+    private var mWM: WindowManager? = null
 
     /**
      * Set which mPolicy to show the toast
@@ -50,6 +53,13 @@ class ToastImpl : IToast {
 
     override fun cancel() {
         mToast?.cancel()
+    }
+
+    override fun hide() {
+        mToast?.view?.parent?.let {
+            mWM?.removeViewImmediate(mToast?.view)
+            mToast?.view = null
+        }
     }
 
     override fun getPolicy(): Long {
@@ -111,6 +121,10 @@ class ToastImpl : IToast {
      * @throws Resources.NotFoundException if the resource can't be found.
      */
     private fun show(bean: ToastBean, hasPortraitAndLandscape: Boolean) {
+        if (mWM == null){
+            mWM = bean.mContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        }
+
         if (!hasPortraitAndLandscape) {
             mToastBeanLandscape = null
             mToastBeanPortrait = null
@@ -134,6 +148,7 @@ class ToastImpl : IToast {
                         mToast = createOrUpdateToastFromToastBean(mToast, bean)
                         mToast!!.show()
                     }else{
+                        hide()
                         cancel() // to avoid RuntimeException("This Toast was not created with Toast.makeText()");
                         mToast = createOrUpdateToastFromToastBean(null, bean)
                         mToast!!.show()
@@ -194,7 +209,6 @@ class ToastImpl : IToast {
 
         _toast.setGravity(bean.gravity, bean.xOffset, bean.yOffset)
         _toast.setMargin(bean.horizontalMargin, bean.horizontalMargin)
-
         return _toast
     }
 }
