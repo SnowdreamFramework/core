@@ -7,7 +7,7 @@ import com.github.snowdream.core.widget.Toast
 /**
  * Created by hui.yang on 2015/2/26.
  */
-class Application : MultiDexApplication() {
+open class Application : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
     }

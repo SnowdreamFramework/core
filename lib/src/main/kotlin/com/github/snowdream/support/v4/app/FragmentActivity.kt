@@ -6,7 +6,7 @@ import android.os.Bundle
 /**
  * Created by hui.yang on 2015/2/7.
  */
-class FragmentActivity : android.support.v4.app.FragmentActivity(), Page {
+open class FragmentActivity : android.support.v4.app.FragmentActivity(), Page {
 
     private var mIsActive: Boolean = false
     private var mIsVisible: Boolean = false

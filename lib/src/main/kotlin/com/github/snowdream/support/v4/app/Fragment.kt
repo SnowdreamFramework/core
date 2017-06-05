@@ -6,7 +6,7 @@ import android.os.Bundle
 /**
  * Created by hui.yang on 2015/2/7.
  */
-class Fragment : android.support.v4.app.Fragment(), Page {
+open class Fragment : android.support.v4.app.Fragment(), Page {
 
     private var mIsActive: Boolean = false
     private var mIsDestoryed: Boolean = false
