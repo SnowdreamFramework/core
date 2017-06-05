@@ -1,5 +1,8 @@
 package com.github.snowdream.core.task
 
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.support.annotation.CallSuper
 import android.text.TextUtils
 import com.github.snowdream.support.v4.app.Page
@@ -12,11 +15,55 @@ import java.util.concurrent.atomic.AtomicInteger
  * Created by snowdream on 17/6/4.
  */
 open abstract class Task<in Params, Progress, Result> : Runnable, Cancelable {
-    private var mTaskListener: TaskListener<Result, Progress> = TaskListener()
+    private var mTaskListener: TaskListener<Result, Progress>? = TaskListener()
     private var mPage: Page? = null
     private val mCancelled = AtomicBoolean()
 
     private val mCount = AtomicInteger(1)
+
+    private val mInternalHandler = InternalHandler(Looper.getMainLooper())
+
+    private var mSuccess = 0x00
+
+    private val FINISH_UI_CALLBACK = 0x01
+    private val FINISH_WORKER_CALLBACK = 0x10
+    private val FINISH_ALL_CALLBACK = 0x11
+
+    inner class InternalHandler(looper: android.os.Looper ) : Handler(looper) {
+
+        override fun handleMessage(msg: Message?) {
+            super.handleMessage(msg)
+
+            if (msg == null) {
+                return
+            }
+
+            when(msg.what){
+                FINISH_UI_CALLBACK -> {
+                    mSuccess = mSuccess or 0x01
+                }
+                FINISH_WORKER_CALLBACK -> {
+                    mSuccess = mSuccess or 0x10
+                }
+            }
+
+            when(mSuccess){
+                FINISH_UI_CALLBACK -> {
+                    if (mPage == null) {
+                        release()
+                    }
+                }
+                FINISH_WORKER_CALLBACK -> {
+                    if (mPage == null) {
+                        release()
+                    }
+                }
+                FINISH_ALL_CALLBACK -> {
+                    release()
+                }
+            }
+        }
+    }
 
     /**
      * Task name
@@ -216,7 +263,7 @@ open abstract class Task<in Params, Progress, Result> : Runnable, Cancelable {
 
      * @return TaskListener<Result></Result>,Progress>
      */
-    fun getTaskListener(): TaskListener<Result, Progress> {
+    fun getTaskListener(): TaskListener<Result, Progress>? {
         return mTaskListener
     }
 
@@ -268,20 +315,20 @@ open abstract class Task<in Params, Progress, Result> : Runnable, Cancelable {
 
 
     private fun performOnStart() {
-        TaskManager.runOnWorkerThread(Runnable { mTaskListener.onStart(false) })
+        TaskManager.runOnWorkerThread(Runnable { mTaskListener?.onStart(false) })
 
         if (mPage == null || !mPage!!.isActive()) {
             return
         }
 
-        TaskManager.runOnUiThread(mPage!!, Runnable { mTaskListener.onStart(true) })
+        TaskManager.runOnUiThread(mPage!!, Runnable { mTaskListener?.onStart(true) })
     }
 
     private fun performOnFinish() {
         mStatus = Status.FINISHED
 
         TaskManager.runOnWorkerThread(Runnable {
-            mTaskListener.onFinish(false)
+            mTaskListener?.onFinish(false)
         })
 
         if (mPage == null || !mPage!!.isActive()) {
@@ -289,21 +336,20 @@ open abstract class Task<in Params, Progress, Result> : Runnable, Cancelable {
         }
 
         TaskManager.runOnUiThread(mPage!!, Runnable {
-            mTaskListener.onFinish(true)
+            mTaskListener?.onFinish(true)
         })
     }
-
 
     protected fun performOnProgress(progress: Progress) {
         if (isCancelled()) return
 
-        TaskManager.runOnWorkerThread(Runnable { mTaskListener.onProgress(false, progress) })
+        TaskManager.runOnWorkerThread(Runnable { mTaskListener?.onProgress(false, progress) })
 
         if (mPage == null || !mPage!!.isActive()) {
             return
         }
 
-        TaskManager.runOnUiThread(mPage!!, Runnable { mTaskListener.onProgress(true, progress) })
+        TaskManager.runOnUiThread(mPage!!, Runnable { mTaskListener?.onProgress(true, progress) })
     }
 
     private fun performOnCancel() {
@@ -311,13 +357,19 @@ open abstract class Task<in Params, Progress, Result> : Runnable, Cancelable {
 
         if (isCancelled()) return
 
-        TaskManager.runOnWorkerThread(Runnable { mTaskListener.onCancelled(false) })
+        TaskManager.runOnWorkerThread(Runnable {
+            mTaskListener?.onCancelled(false)
+            mInternalHandler.sendMessage(Message.obtain(mInternalHandler, FINISH_WORKER_CALLBACK))
+        })
 
         if (mPage == null || !mPage!!.isActive()) {
             return
         }
 
-        TaskManager.runOnUiThread(mPage!!, Runnable { mTaskListener.onCancelled(true) })
+        TaskManager.runOnUiThread(mPage!!, Runnable {
+            mTaskListener?.onCancelled(true)
+            mInternalHandler.sendMessage(Message.obtain(mInternalHandler,FINISH_UI_CALLBACK))
+        })
     }
 
     protected fun performOnSuccess(result: Result) {
@@ -325,13 +377,19 @@ open abstract class Task<in Params, Progress, Result> : Runnable, Cancelable {
 
         if (isCancelled()) return
 
-        TaskManager.runOnWorkerThread(Runnable { mTaskListener.onSuccess(false, result) })
+        TaskManager.runOnWorkerThread(Runnable {
+            mTaskListener?.onSuccess(false, result)
+            mInternalHandler.sendMessage(Message.obtain(mInternalHandler, FINISH_WORKER_CALLBACK))
+        })
 
         if (mPage == null || !mPage!!.isActive()) {
             return
         }
 
-        TaskManager.runOnUiThread(mPage!!, Runnable { mTaskListener.onSuccess(true, result) })
+        TaskManager.runOnUiThread(mPage!!, Runnable {
+            mTaskListener?.onSuccess(true, result)
+            mInternalHandler.sendMessage(Message.obtain(mInternalHandler,FINISH_UI_CALLBACK))
+        })
     }
 
 
@@ -340,13 +398,24 @@ open abstract class Task<in Params, Progress, Result> : Runnable, Cancelable {
 
         if (isCancelled()) return
 
-        TaskManager.runOnWorkerThread(Runnable { mTaskListener.onError(false, thr) })
+        TaskManager.runOnWorkerThread(Runnable {
+            mTaskListener?.onError(false, thr)
+            mInternalHandler.sendMessage(Message.obtain(mInternalHandler, FINISH_WORKER_CALLBACK))
+        })
 
         if (mPage == null || !mPage!!.isActive()) {
             return
         }
 
-        TaskManager.runOnUiThread(mPage!!, Runnable { mTaskListener.onError(true, thr) })
+        TaskManager.runOnUiThread(mPage!!, Runnable {
+            mTaskListener?.onError(true, thr)
+            mInternalHandler.sendMessage(Message.obtain(mInternalHandler,FINISH_UI_CALLBACK))
+        })
+    }
+
+    private fun release(){
+        mPage = null
+        mTaskListener = null
     }
 }
 

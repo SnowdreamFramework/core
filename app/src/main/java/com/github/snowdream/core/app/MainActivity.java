@@ -35,58 +35,7 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
 
-        Task task = new Task<String,Void,Void>() {
 
-            private String strings;
-
-            @Override
-            public boolean cancel(boolean mayInterruptIfRunning) {
-                return super.cancel(mayInterruptIfRunning);
-            }
-
-            @Override
-            public boolean isCancelled() {
-                return super.isCancelled();
-            }
-
-            @Override
-            public void onGetParams(String strings) {
-                this.strings = strings;
-            }
-
-            @Override
-            public void run() {
-                super.run();
-                Log.i("YANGHUI - TaskName: ", getTaskName());
-                Log.i("YANGHUI",strings);
-            }
-
-            @Override
-            public int hashCode() {
-                return super.hashCode();
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-                return super.equals(obj);
-            }
-
-            @Override
-            protected Object clone() throws CloneNotSupportedException {
-                return super.clone();
-            }
-
-            @Override
-            public String toString() {
-                return super.toString();
-            }
-
-            @Override
-            protected void finalize() throws Throwable {
-                super.finalize();
-            }
-        };
-        task.execute("Hello Kotlin!");
 
         final FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab);
 
@@ -149,6 +98,62 @@ public class MainActivity extends FragmentActivity {
                 bean.setGravity(gravity, 0, 0);
 
                 Toast.show(bean);
+
+
+                Task task = new Task<String,Void,Void>() {
+
+                    private String strings;
+
+                    @Override
+                    public boolean cancel(boolean mayInterruptIfRunning) {
+                        return super.cancel(mayInterruptIfRunning);
+                    }
+
+                    @Override
+                    public boolean isCancelled() {
+                        return super.isCancelled();
+                    }
+
+                    @Override
+                    public void onGetParams(String strings) {
+                        this.strings = strings;
+                    }
+
+                    @Override
+                    public void run() {
+                        super.run();
+                        Log.i("YANGHUI - TaskName: ", getTaskName());
+                        Log.i("YANGHUI",strings);
+
+                        performOnSuccess(null);
+                    }
+
+                    @Override
+                    public int hashCode() {
+                        return super.hashCode();
+                    }
+
+                    @Override
+                    public boolean equals(Object obj) {
+                        return super.equals(obj);
+                    }
+
+                    @Override
+                    protected Object clone() throws CloneNotSupportedException {
+                        return super.clone();
+                    }
+
+                    @Override
+                    public String toString() {
+                        return super.toString();
+                    }
+
+                    @Override
+                    protected void finalize() throws Throwable {
+                        super.finalize();
+                    }
+                };
+                task.execute(MainActivity.this,"Hello Kotlin!");
 
             }
         });
