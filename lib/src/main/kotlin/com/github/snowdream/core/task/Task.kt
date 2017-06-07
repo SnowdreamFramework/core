@@ -193,28 +193,18 @@ open abstract class Task<in Params, Progress, Result> : Runnable, Cancelable {
         FINISHED
     }
 
-    constructor() : this(null, THREAD_PRIORITY_BACKGROUND, null)
+    constructor() : this(null, THREAD_PRIORITY_BACKGROUND)
 
-    constructor(name: String?) : this(name, THREAD_PRIORITY_BACKGROUND, null)
+    constructor(name: String?) : this(name, THREAD_PRIORITY_BACKGROUND)
 
-    constructor(priority: Int = THREAD_PRIORITY_BACKGROUND) : this(null, priority, null)
+    constructor(priority: Int = THREAD_PRIORITY_BACKGROUND) : this(null, priority)
 
-    constructor(listener: TaskListener<Result, Progress>?) : this(null, THREAD_PRIORITY_BACKGROUND, listener)
-
-    constructor(name: String?, listener: TaskListener<Result, Progress>?) : this(name, THREAD_PRIORITY_BACKGROUND, listener)
-
-    constructor(name: String?, priority: Int = THREAD_PRIORITY_BACKGROUND) : this(name, priority, null)
-
-    constructor(name: String? = null, priority: Int = THREAD_PRIORITY_BACKGROUND, listener: TaskListener<Result, Progress>? = null) {
+    constructor(name: String? = null, priority: Int = THREAD_PRIORITY_BACKGROUND) {
         if (name != null && !TextUtils.isEmpty(name)) {
             mName = name
         }
 
         mPriority = priority
-
-        if (listener != null) {
-            mTaskListener = listener
-        }
     }
 
     @CallSuper
@@ -282,11 +272,19 @@ open abstract class Task<in Params, Progress, Result> : Runnable, Cancelable {
     }
 
     fun execute( params: Params) {
+        execute(params,null)
+    }
+
+    fun execute( params: Params,listener: TaskListener<Result, Progress>? = null) {
         onGetParams(params)
         runOnThread()
     }
 
     fun execute(page: Page,  params: Params) {
+        execute(page,params,null)
+    }
+
+    fun execute(page: Page,  params: Params, listener: TaskListener<Result, Progress>? = null) {
         mPage = page
 
         onGetParams(params)
