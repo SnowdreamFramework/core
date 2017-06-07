@@ -15,7 +15,7 @@ dependencies {
 
     compile deps.'android-toybricks'
     compile 'com.github.snowdream:util:0.2.1'
-
+    compile 'com.badoo.mobile:android-weak-handler:1.1'
 }
 
 apply plugin: 'com.github.snowdream.toybricks'
