@@ -1,5 +1,7 @@
 package com.github.snowdream.core.net
 
+import com.github.snowdream.net.HTTP.Companion.DEFAULT_USER_AGENT
+import com.github.snowdream.net.HTTP.Companion.USER_AGENT
 import com.github.snowdream.net.IHttpRequest
 import com.github.snowdream.net.IHttpResponseParser
 import com.github.snowdream.toybricks.annotation.Implementation
@@ -8,6 +10,8 @@ import okhttp3.*
 import java.io.File
 
 /**
+ * Constants and static helpers related to the HTTP protocol.
+ *
  * Created by snowdream on 17/6/26.
  */
 @Implementation(IHttpRequest::class)
@@ -19,6 +23,7 @@ class HttpRequestImpl<Result> : IHttpRequest<Result> {
     private val mFormBodyBuilder: FormBody.Builder = FormBody.Builder()
     private val mMultipartBodyBuilder: MultipartBody.Builder = MultipartBody.Builder()
     private var mIsMultipart: Boolean = false
+    private var mUserAgent:String = DEFAULT_USER_AGENT
 
     override fun addUrl(url: String): IHttpRequest<Result> {
         mRequestUrlBuilder = HttpUrl.parse(url)!!.newBuilder()
@@ -28,6 +33,10 @@ class HttpRequestImpl<Result> : IHttpRequest<Result> {
 
     override fun addHeader(key: String, value: String): IHttpRequest<Result> {
         mRequestBuilder.addHeader(key, value)
+
+        if (key == USER_AGENT){
+            mUserAgent = value
+        }
 
         return this
     }
@@ -121,52 +130,55 @@ class HttpRequestImpl<Result> : IHttpRequest<Result> {
     }
 
     override fun get() {
-        mRequest = mRequestBuilder
-                .url(mRequestUrlBuilder.build())
+        mRequest = getRequestBuilder()
                 .get()
                 .build()
     }
 
     override fun post() {
-        mRequest = mRequestBuilder
-                .url(mRequestUrlBuilder.build())
+        mRequest = getRequestBuilder()
                 .post(getRequestBody())
                 .build()
     }
 
     override fun head() {
-        mRequest = mRequestBuilder
-                .url(mRequestUrlBuilder.build())
+        mRequest =getRequestBuilder()
                 .head()
                 .build()
     }
 
     override fun delete() {
-        mRequest = mRequestBuilder
-                .url(mRequestUrlBuilder.build())
+        mRequest = getRequestBuilder()
                 .delete(getRequestBody())
                 .build()
     }
 
     override fun put() {
-        mRequest = mRequestBuilder
-                .url(mRequestUrlBuilder.build())
+        mRequest =getRequestBuilder()
                 .put(getRequestBody())
                 .build()
     }
 
     override fun patch() {
-        mRequest = mRequestBuilder
-                .url(mRequestUrlBuilder.build())
+        mRequest = getRequestBuilder()
                 .patch(getRequestBody())
                 .build()
     }
 
     override fun method(method: String) {
-        mRequest = mRequestBuilder
-                .url(mRequestUrlBuilder.build())
+        mRequest = getRequestBuilder()
                 .method(method, getRequestBody())
                 .build()
+    }
+
+    private fun getRequestBuilder():Request.Builder {
+       mRequestBuilder.url(mRequestUrlBuilder.build())
+
+        if (mUserAgent == DEFAULT_USER_AGENT) {
+            mRequestBuilder.addHeader(USER_AGENT, mUserAgent)
+        }
+
+        return mRequestBuilder
     }
 
     private fun getRequestBody(): RequestBody {
