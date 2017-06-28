@@ -6,7 +6,7 @@ package com.github.snowdream.core.task
  *
  * Created by snowdream on 17/6/3.
  */
-interface Cancelable {
+interface Cancellable {
     /**
      * Attempt to cancel execution of this task. This attempt will fail if the task has already completed, already been cancelled, or could not be cancelled for some other reason.
      * If successful, and this task has not started when cancel is called, this task should never run.

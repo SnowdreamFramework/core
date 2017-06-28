@@ -15,6 +15,9 @@ dependencies {
 
     compile project(':lib')
     compile('com.getkeepsafe.relinker:relinker:1.2.2')
+
+    compile 'com.squareup.okhttp3:okhttp:3.8.1'
+
 }
 
 apply plugin: 'com.github.snowdream.toybricks'

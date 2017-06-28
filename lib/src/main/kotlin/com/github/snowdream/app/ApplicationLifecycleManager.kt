@@ -4,12 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.content.res.Configuration
 import android.os.Bundle
-
-import com.autonavi.common.utils.Logs
-import com.autonavi.common.utils.PlaySoundUtils
-import com.autonavi.minimap.R
-
-import java.util.ArrayList
+import java.util.*
 
 /**
  * Created by snowdream on 17/3/5.

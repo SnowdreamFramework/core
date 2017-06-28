@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger
 /**
  * Created by snowdream on 17/6/4.
  */
-open abstract class Task<in Params, Progress, Result> : Runnable, Cancelable {
+open abstract class Task<in Params, Progress, Result> : Runnable, Cancellable {
     private var mTaskListener: TaskListener<Result, Progress>? = TaskListener()
     private var mPage: Page? = null
     private val mCancelled = AtomicBoolean()
@@ -260,7 +260,7 @@ open abstract class Task<in Params, Progress, Result> : Runnable, Cancelable {
     /**
      * get input
      */
-   abstract fun onGetParams(params: Params)
+   abstract fun onGetParams(params: Params?)
 
     /**
      * get Task Name
@@ -271,25 +271,35 @@ open abstract class Task<in Params, Progress, Result> : Runnable, Cancelable {
         return mName
     }
 
-    fun execute( params: Params) {
+    fun execute( params: Params?) :Cancellable {
         execute(params,null)
+        return this
     }
 
-    fun execute( params: Params,listener: TaskListener<Result, Progress>? = null) {
+    fun execute( params: Params?,listener: TaskListener<Result, Progress>? = null):Cancellable {
+        mTaskListener = listener
+
         onGetParams(params)
         runOnThread()
+
+        return this
     }
 
-    fun execute(page: Page,  params: Params) {
+    fun execute(page: Page,  params: Params?) :Cancellable{
         execute(page,params,null)
+
+        return this
     }
 
-    fun execute(page: Page,  params: Params, listener: TaskListener<Result, Progress>? = null) {
+    fun execute(page: Page,  params: Params?, listener: TaskListener<Result, Progress>? = null) :Cancellable{
         mPage = page
+        mTaskListener = listener
 
         onGetParams(params)
 
         runOnThread()
+
+        return this
     }
 
     private fun runOnThread() {
