@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnCreateContextMenuListener;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ import com.github.snowdream.core.task.Cancellable;
 import com.github.snowdream.core.task.Task;
 import com.github.snowdream.core.widget.Toast;
 import com.github.snowdream.core.widget.ToastBean;
+import com.github.snowdream.image.IImage;
 import com.github.snowdream.net.DefaultHttpResponseParser;
 import com.github.snowdream.net.HttpResponseCallback;
 import com.github.snowdream.net.IHttp;
@@ -119,6 +121,10 @@ public class MainActivity extends FragmentActivity {
                         Log.i("MainActivity",s);
                     }
                 });
+
+                ImageView imageView = (ImageView)findViewById(R.id.imageview);
+                IImage iImage = ToyBricks.getImplementation(IImage.class);
+                iImage.load(MainActivity.this,imageView,"https://www.baidu.com/img/bd_logo1.png",R.mipmap.ic_launcher,R.mipmap.ic_launcher);
             }
         });
 
